@@ -1,0 +1,3 @@
+<Project>
+    <Sdk Name="Allegro.DotnetSdk" />
+</Project>

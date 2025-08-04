@@ -1,0 +1,13 @@
+﻿@page "/"
+@using Radzen.Blazor
+
+<h3>Radzen Button Example</h3>
+
+<RadzenButton Text="Click me" Click="@OnClick" Style="margin:10px" />
+
+@code {
+    void OnClick()
+    {
+        Console.WriteLine("Radzen button clicked!");
+    }
+}
