@@ -16,11 +16,13 @@ public partial class Orders : ComponentBase
 
     private async Task HandleFileSelected(InputFileChangeEventArgs e)
     {
-        await _nbpService!.GetData(DateOnly.FromDateTime(DateTime.Now.AddDays(-5)), DateOnly.FromDateTime(DateTime.Now.AddDays(-1)));
+        // pobieranie walut
+        await _nbpService!.DownloadRatesFromTimeRange(DateOnly.FromDateTime(DateTime.Now.AddDays(-5)), DateOnly.FromDateTime(DateTime.Now.AddDays(-1)));
+        Console.WriteLine(_nbpService.GetRateForDay("EUR", DateOnly.FromDateTime(DateTime.Now.AddDays(-1))));
+
         var file = e.File;
         await using var stream = file.OpenReadStream();
         using var reader = new StreamReader(stream, Encoding.UTF8);
-
         var content = await reader.ReadToEndAsync();
         _orders = ParseCsv(content);
     }

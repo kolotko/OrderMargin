@@ -4,4 +4,5 @@ public enum CurrencyCode
 {
     PLN,
     EUR,
+    CZK,
 }

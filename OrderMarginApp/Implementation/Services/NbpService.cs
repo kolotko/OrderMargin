@@ -10,28 +10,36 @@ namespace Implementation.Services;
 public class NbpService(HttpClient httpClient) : INbpService
 {
     private HttpClient HttpClient { get; set; } = httpClient;
+    private Dictionary<string, List<(DateOnly Date, decimal Rate)>> _cache = new();
 
     private readonly JsonSerializerOptions _options = new()
     {
         PropertyNameCaseInsensitive = true
     };
 
-    public async Task GetData(DateOnly minDate, DateOnly maxTaxDate)
+    public async Task DownloadRatesFromTimeRange(DateOnly minDate, DateOnly maxTaxDate)
     {
-        var fromDate = minDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
-        var toDate = maxTaxDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+        _cache = new();
         foreach (var currencyCode in NbpSettings.CurrencyCodes)
         {
-            //zapisać klucz z enuma + kursy
-            await DownloadData(currencyCode, fromDate, toDate);
+            var eurData = await DownloadData(currencyCode, minDate, maxTaxDate);
+            var eurRates = FillMissingDates(eurData, minDate, maxTaxDate);
+            _cache.Add(currencyCode, eurRates);
         }
     }
 
-    private async Task<NbpExchangeRate> DownloadData(string currencyCode, string fromDate, string toDate)
+    public decimal GetRateForDay(string currency, DateOnly date)
+    {
+        var rates = _cache[currency];
+        var record = rates.FirstOrDefault(x => x.Date == date);
+        return record.Rate;
+    }
+
+    private async Task<NbpExchangeRate> DownloadData(string currencyCode, DateOnly fromDate, DateOnly toDate)
     {
         try
         {
-            var response = await HttpClient.GetStringAsync(NbpSettings.ApiUrl + $"/{currencyCode}/{fromDate}/{toDate}");
+            var response = await HttpClient.GetStringAsync(NbpSettings.ApiUrl + $"/{currencyCode}/{fromDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)}/{toDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)}");
             var exchangeData = JsonSerializer.Deserialize<NbpExchangeRate>(response, _options);
 
             return exchangeData!;
@@ -40,8 +48,44 @@ public class NbpService(HttpClient httpClient) : INbpService
         {
             // TODO
             Console.WriteLine("Błąd zapytania HTTP: " + ex.Message);
+            throw;
         }
-        // TODO
-        throw new NotImplementedException();
+    }
+
+    private static List<(DateOnly Date, decimal Rate)> FillMissingDates(NbpExchangeRate data, DateOnly start, DateOnly end)
+    {
+        var result = new List<(DateOnly Date, decimal Rate)>();
+        decimal lastRate = 0;
+
+        try
+        {
+            for (var date = start; date <= end; date = date.AddDays(1))
+            {
+                if (data.Rates is null)
+                    continue;
+
+                var rateForDay = data.Rates.FirstOrDefault(r => r.EffectiveDate == date);
+
+                if (rateForDay != null)
+                {
+                    lastRate = rateForDay.Mid;
+                    result.Add((date, lastRate));
+                    continue;
+                }
+
+                if (lastRate != 0) // brak kursu (weekend/święto) weź ostatni kurs
+                {
+                    result.Add((date, lastRate));
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            // TODO
+            Console.WriteLine("Błąd zapytania HTTP: " + ex.Message);
+            throw;
+        }
+
+        return result;
     }
 }

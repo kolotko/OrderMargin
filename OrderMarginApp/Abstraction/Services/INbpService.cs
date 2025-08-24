@@ -2,5 +2,6 @@
 
 public interface INbpService
 {
-    Task GetData(DateOnly minDate, DateOnly maxTaxDate);
+    Task DownloadRatesFromTimeRange(DateOnly minDate, DateOnly maxTaxDate);
+    decimal GetRateForDay(string currency, DateOnly date);
 }
