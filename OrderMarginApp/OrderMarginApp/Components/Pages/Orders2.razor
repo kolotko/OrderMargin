@@ -1,5 +1,6 @@
 ﻿@page "/Orders2"
 @using Dto
+@using Radzen
 @using Radzen.Blazor
 
 
@@ -10,11 +11,42 @@
 
 @if (_prices != null)
 {
-    <RadzenDataGrid Data="@_prices" TItem="PriceCalculatorDto" ColumnWidth="200px">
+    <RadzenDataGrid Data="@_prices" 
+                    TItem="PriceCalculatorDto" ColumnWidth="200px"
+                    @ref="_grid"
+                    EditMode="DataGridEditMode.Single"
+                    RowUpdate="@OnUpdateRow">
         <Columns>
-            <RadzenDataGridColumn TItem="PriceCalculatorDto" Property="@nameof(PriceCalculatorDto.Sku)" Title="@nameof(PriceCalculatorDto.Sku)" />
-            <RadzenDataGridColumn TItem="PriceCalculatorDto" Property="@nameof(PriceCalculatorDto.EstimatedShippingCostZl)" Title="@nameof(PriceCalculatorDto.EstimatedShippingCostZl)" />
-            <RadzenDataGridColumn TItem="PriceCalculatorDto" Property="@nameof(PriceCalculatorDto.NetDeliveryCostZl)" Title="@nameof(PriceCalculatorDto.NetDeliveryCostZl)" />
+            <RadzenDataGridColumn TItem="PriceCalculatorDto" Property="@nameof(PriceCalculatorDto.Sku)" Title="@nameof(PriceCalculatorDto.Sku)" CssClass="rz-column-title">
+                <EditTemplate Context="data">
+                    <RadzenTextBox @bind-Value="data.Sku" Style="width:100%" />
+                </EditTemplate>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="PriceCalculatorDto" Property="@nameof(PriceCalculatorDto.EstimatedShippingCostZl)" Title="@nameof(PriceCalculatorDto.EstimatedShippingCostZl)">
+                <EditTemplate Context="data">
+                    <RadzenNumeric @bind-Value="data.EstimatedShippingCostZl" Style="width:100%" />
+                </EditTemplate>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="PriceCalculatorDto" Property="@nameof(PriceCalculatorDto.NetDeliveryCostZl)" Title="@nameof(PriceCalculatorDto.NetDeliveryCostZl)">
+                <EditTemplate Context="data">
+                    <RadzenNumeric @bind-Value="data.NetDeliveryCostZl" Style="width:100%" />
+                </EditTemplate>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="PriceCalculatorDto" Property="@nameof(PriceCalculatorDto.ValidatorResult)" Title="@nameof(PriceCalculatorDto.ValidatorResult)" />
+            <RadzenDataGridColumn TItem="PriceCalculatorDto" Context="data" TextAlign="TextAlign.Center" Width="120px">
+                <Template Context="data">
+                    <RadzenButton ButtonStyle="ButtonStyle.Light" Size="ButtonSize.Small" Icon="edit"
+                                  Click="@((args) => _grid.EditRow(data))" />
+                    <RadzenButton ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small" Icon="delete"
+                                  Click="@((args) => DeleteRow(data))" Style="margin-left: 5px;" />
+                </Template>
+                <EditTemplate Context="data">
+                    <RadzenButton ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Small" Icon="save"
+                                  Click="@((args) => _grid.UpdateRow(data))" />
+                    <RadzenButton ButtonStyle="ButtonStyle.Light" Size="ButtonSize.Small" Icon="cancel"
+                                  Click="@((args) => _grid.CancelEditRow(data))" Style="margin-left: 5px;" />
+                </EditTemplate>
+            </RadzenDataGridColumn>
         </Columns>
     </RadzenDataGrid>
 }

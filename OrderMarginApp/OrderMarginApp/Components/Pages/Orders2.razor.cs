@@ -4,13 +4,36 @@ using System.Text.RegularExpressions;
 using Dto;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using Radzen;
+using Radzen.Blazor;
+using Validator;
 
 namespace OrderMarginApp.Components.Pages;
 
 public partial class Orders2 : ComponentBase
 {
     private List<PriceCalculatorDto>? _prices;
+    private PriceCalculatorDtoValidator? _validator;
     private const string _regexPattern = @"\s|zł";
+    private RadzenDataGrid<PriceCalculatorDto> _grid;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _validator = new PriceCalculatorDtoValidator();
+        await base.OnInitializedAsync();
+    }
+
+    private void OnUpdateRow(PriceCalculatorDto item)
+    {
+        item.ValidatorResult = "";
+        _grid.UpdateRow(item);
+    }
+
+    private void DeleteRow(PriceCalculatorDto item)
+    {
+        _prices!.Remove(item);
+        _grid.Reload();
+    }
 
     private async Task HandleFileSelected(InputFileChangeEventArgs e)
     {
@@ -21,7 +44,7 @@ public partial class Orders2 : ComponentBase
         _prices = ParseCsv(content);
     }
 
-    private static List<PriceCalculatorDto> ParseCsv(string csv)
+    private List<PriceCalculatorDto> ParseCsv(string csv)
     {
         var result = new List<PriceCalculatorDto>();
         var lines = csv.Split("\n", StringSplitOptions.RemoveEmptyEntries);
@@ -36,7 +59,7 @@ public partial class Orders2 : ComponentBase
                     break;
                 }
 
-                var price = new PriceCalculatorDto()
+                var priceCalculatorDto = new PriceCalculatorDto()
                 {
                     Sku = cols[1].Trim(),
                     EstimatedShippingCostZl = decimal.TryParse(
@@ -53,8 +76,18 @@ public partial class Orders2 : ComponentBase
                         out var netDeliveryCost)
                         ? netDeliveryCost
                         : 0,
+                    ValidatorResult = string.Empty
                 };
-                result.Add(price);
+                var validatorResult = _validator!.Validate(priceCalculatorDto);
+                if (!validatorResult.IsValid)
+                {
+                    foreach (var error in validatorResult.Errors)
+                    {
+                        priceCalculatorDto.ValidatorResult = error.ErrorMessage;
+                        // Console.WriteLine($"- {error.PropertyName}: {error.ErrorMessage}");
+                    }
+                }
+                result.Add(priceCalculatorDto);
             }
         }
         return result;
