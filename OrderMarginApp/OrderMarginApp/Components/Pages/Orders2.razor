@@ -1,0 +1,20 @@
+﻿@page "/Orders2"
+@using Dto
+@using Radzen.Blazor
+
+
+<h3>Wczytaj plik CSV</h3>
+
+<InputFile OnChange="HandleFileSelected" accept=".csv" />
+<br /><br />
+
+@if (_prices != null)
+{
+    <RadzenDataGrid Data="@_prices" TItem="PriceCalculatorDto" ColumnWidth="200px">
+        <Columns>
+            <RadzenDataGridColumn TItem="PriceCalculatorDto" Property="@nameof(PriceCalculatorDto.Sku)" Title="@nameof(PriceCalculatorDto.Sku)" />
+            <RadzenDataGridColumn TItem="PriceCalculatorDto" Property="@nameof(PriceCalculatorDto.EstimatedShippingCostZl)" Title="@nameof(PriceCalculatorDto.EstimatedShippingCostZl)" />
+            <RadzenDataGridColumn TItem="PriceCalculatorDto" Property="@nameof(PriceCalculatorDto.NetDeliveryCostZl)" Title="@nameof(PriceCalculatorDto.NetDeliveryCostZl)" />
+        </Columns>
+    </RadzenDataGrid>
+}
