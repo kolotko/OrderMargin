@@ -4,6 +4,8 @@ using Abstraction.Services;
 using Dto;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using Radzen.Blazor;
+using Validator;
 
 namespace OrderMarginApp.Components.Pages;
 
@@ -13,12 +15,32 @@ public partial class Orders : ComponentBase
     private INbpService? _nbpService { get; set; }
 
     private List<OrderFileDto>? _orders;
+    private OrderFileValidator? _validator;
+    private RadzenDataGrid<OrderFileDto> _grid;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _validator = new OrderFileValidator();
+        await base.OnInitializedAsync();
+    }
+
+    private void OnUpdateRow(OrderFileDto item)
+    {
+        item.ValidatorResult = "";
+        _grid.UpdateRow(item);
+    }
+
+    private void DeleteRow(OrderFileDto item)
+    {
+        _orders!.Remove(item);
+        _grid.Reload();
+    }
 
     private async Task HandleFileSelected(InputFileChangeEventArgs e)
     {
         // pobieranie walut
-        await _nbpService!.DownloadRatesFromTimeRange(DateOnly.FromDateTime(DateTime.Now.AddDays(-5)), DateOnly.FromDateTime(DateTime.Now.AddDays(-1)));
-        Console.WriteLine(_nbpService.GetRateForDay("EUR", DateOnly.FromDateTime(DateTime.Now.AddDays(-1))));
+        // await _nbpService!.DownloadRatesFromTimeRange(DateOnly.FromDateTime(DateTime.Now.AddDays(-5)), DateOnly.FromDateTime(DateTime.Now.AddDays(-1)));
+        // Console.WriteLine(_nbpService.GetRateForDay("EUR", DateOnly.FromDateTime(DateTime.Now.AddDays(-1))));
 
         var file = e.File;
         await using var stream = file.OpenReadStream();
@@ -27,7 +49,7 @@ public partial class Orders : ComponentBase
         _orders = ParseCsv(content);
     }
 
-    private static List<OrderFileDto> ParseCsv(string csv)
+    private List<OrderFileDto> ParseCsv(string csv)
     {
         var result = new List<OrderFileDto>();
         var lines = csv.Split("\n", StringSplitOptions.RemoveEmptyEntries);
@@ -44,7 +66,7 @@ public partial class Orders : ComponentBase
                     Date =
                         DateTime.TryParseExact(
                             cols[1],
-                            "M/d/yyyy HH:mm",
+                            "M/d/yyyy H:mm",
                             CultureInfo.InvariantCulture,
                             DateTimeStyles.None,
                             out var date)
@@ -77,6 +99,19 @@ public partial class Orders : ComponentBase
                 };
 
                 order.TotalCost = order.Quantity * order.Price + order.ShippingCost;
+                var validatorResult = _validator!.Validate(order);
+                if (!validatorResult.IsValid)
+                {
+                    foreach (var error in validatorResult.Errors)
+                    {
+                        order.ValidatorResult = error.ErrorMessage;
+                    }
+                }
+
+                if (result.Count > 10)
+                {
+                    return result;
+                }
                 result.Add(order);
             }
         }

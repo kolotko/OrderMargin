@@ -84,7 +84,6 @@ public partial class Orders2 : ComponentBase
                     foreach (var error in validatorResult.Errors)
                     {
                         priceCalculatorDto.ValidatorResult = error.ErrorMessage;
-                        // Console.WriteLine($"- {error.PropertyName}: {error.ErrorMessage}");
                     }
                 }
                 result.Add(priceCalculatorDto);

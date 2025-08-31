@@ -20,4 +20,5 @@ public class OrderFileDto
     public string? TrackingNumber { get; set; }
     public string? OrderStatus { get; set; }
     public decimal TotalCost { get; set; }
+    public string? ValidatorResult { get; set; }
 }
