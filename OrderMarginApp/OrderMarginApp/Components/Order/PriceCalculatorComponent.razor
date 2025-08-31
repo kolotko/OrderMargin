@@ -1,11 +1,7 @@
-﻿@page "/Orders2"
-@using Dto
+﻿@using Dto
 @using Radzen
 @using Radzen.Blazor
-
-
-<h3>Wczytaj plik CSV</h3>
-
+<h3>Wczytaj plik CSV zawierający kalkulator cen</h3>
 <InputFile OnChange="HandleFileSelected" accept=".csv" />
 <br /><br />
 
@@ -49,4 +45,6 @@
             </RadzenDataGridColumn>
         </Columns>
     </RadzenDataGrid>
+    
+    <RadzenButton Click=@DataReady Text="Primary" ButtonStyle="ButtonStyle.Primary" />
 }

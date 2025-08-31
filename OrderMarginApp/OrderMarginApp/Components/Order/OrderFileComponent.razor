@@ -1,11 +1,8 @@
-﻿@page "/Orders"
-<h3>Orders</h3>
-
-@using Dto
+﻿@using Dto
 @using Radzen
 @using Radzen.Blazor
 
-<h3>Wczytaj plik CSV</h3>
+<h3>Wczytaj plik CSV zawierający marżowość</h3>
 
 <InputFile OnChange="HandleFileSelected" accept=".csv" />
 <br /><br />
@@ -78,7 +75,7 @@
             </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="OrderFileDto" Property="@nameof(OrderFileDto.Price)" Title="@nameof(OrderFileDto.Price)">
                 <EditTemplate Context="data">
-                    <RadzenNumeric @bind-Value="data.Quantity" Style="width:100%" />
+                    <RadzenNumeric @bind-Value="data.Price" Style="width:100%" />
                 </EditTemplate>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="OrderFileDto" Property="@nameof(OrderFileDto.Currency)" Title="@nameof(OrderFileDto.Currency)">
@@ -128,4 +125,5 @@
             </RadzenDataGridColumn>
         </Columns>
     </RadzenDataGrid>
+    <RadzenButton Click=@DataReady Text="Primary" ButtonStyle="ButtonStyle.Primary" />
 }

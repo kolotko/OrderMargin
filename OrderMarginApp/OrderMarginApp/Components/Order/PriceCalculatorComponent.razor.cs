@@ -4,14 +4,16 @@ using System.Text.RegularExpressions;
 using Dto;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using Radzen;
 using Radzen.Blazor;
 using Validator;
 
-namespace OrderMarginApp.Components.Pages;
+namespace OrderMarginApp.Components.Order;
 
-public partial class Orders2 : ComponentBase
+public partial class PriceCalculatorComponent : ComponentBase
 {
+    [Parameter]
+    public EventCallback<List<PriceCalculatorDto>> PriceCalculatorReady { get; set; }
+
     private List<PriceCalculatorDto>? _prices;
     private PriceCalculatorDtoValidator? _validator;
     private const string _regexPattern = @"\s|zł";
@@ -90,5 +92,11 @@ public partial class Orders2 : ComponentBase
             }
         }
         return result;
+    }
+
+    private async Task DataReady()
+    {
+        if (PriceCalculatorReady.HasDelegate)
+            await PriceCalculatorReady.InvokeAsync(_prices);
     }
 }

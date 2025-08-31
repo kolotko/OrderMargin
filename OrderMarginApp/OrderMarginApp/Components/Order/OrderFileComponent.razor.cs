@@ -1,18 +1,17 @@
 ﻿using System.Globalization;
 using System.Text;
-using Abstraction.Services;
 using Dto;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Radzen.Blazor;
 using Validator;
 
-namespace OrderMarginApp.Components.Pages;
+namespace OrderMarginApp.Components.Order;
 
-public partial class Orders : ComponentBase
+public partial class OrderFileComponent : ComponentBase
 {
-    [Inject]
-    private INbpService? _nbpService { get; set; }
+    [Parameter]
+    public EventCallback<List<OrderFileDto>> OrderFileReady { get; set; }
 
     private List<OrderFileDto>? _orders;
     private OrderFileValidator? _validator;
@@ -38,10 +37,6 @@ public partial class Orders : ComponentBase
 
     private async Task HandleFileSelected(InputFileChangeEventArgs e)
     {
-        // pobieranie walut
-        // await _nbpService!.DownloadRatesFromTimeRange(DateOnly.FromDateTime(DateTime.Now.AddDays(-5)), DateOnly.FromDateTime(DateTime.Now.AddDays(-1)));
-        // Console.WriteLine(_nbpService.GetRateForDay("EUR", DateOnly.FromDateTime(DateTime.Now.AddDays(-1))));
-
         var file = e.File;
         await using var stream = file.OpenReadStream();
         using var reader = new StreamReader(stream, Encoding.UTF8);
@@ -108,19 +103,16 @@ public partial class Orders : ComponentBase
                     }
                 }
 
-                if (result.Count > 10)
-                {
-                    return result;
-                }
                 result.Add(order);
             }
         }
 
         return result;
     }
-}
 
-// nbp 
-// walidacja
-// 2 plik
-// posprzątać blazor
+    private async Task DataReady()
+    {
+        if (OrderFileReady.HasDelegate)
+            await OrderFileReady.InvokeAsync(_orders);
+    }
+}
