@@ -9,12 +9,13 @@ using Validator;
 
 namespace OrderMarginApp.Components.Order;
 
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 public partial class PriceCalculatorComponent : ComponentBase
 {
     [Parameter]
     public EventCallback<List<PriceCalculatorDto>> PriceCalculatorReady { get; set; }
-
-    private List<PriceCalculatorDto>? _prices;
+    [Parameter]
+    public List<PriceCalculatorDto>? Prices { get; set; }
     private PriceCalculatorDtoValidator? _validator;
     private const string _regexPattern = @"\s|zł";
     private RadzenDataGrid<PriceCalculatorDto> _grid;
@@ -25,16 +26,18 @@ public partial class PriceCalculatorComponent : ComponentBase
         await base.OnInitializedAsync();
     }
 
-    private void OnUpdateRow(PriceCalculatorDto item)
+    private async Task OnUpdateRow(PriceCalculatorDto item)
     {
-        item.ValidatorResult = "";
-        _grid.UpdateRow(item);
+        item.ValidatorResult = ValidateRecord(item);
+        await _grid.UpdateRow(item);
+        await DataReady();
     }
 
-    private void DeleteRow(PriceCalculatorDto item)
+    private async Task DeleteRow(PriceCalculatorDto item)
     {
-        _prices!.Remove(item);
-        _grid.Reload();
+        Prices!.Remove(item);
+        await _grid.Reload();
+        await DataReady();
     }
 
     private async Task HandleFileSelected(InputFileChangeEventArgs e)
@@ -43,7 +46,8 @@ public partial class PriceCalculatorComponent : ComponentBase
         await using var stream = file.OpenReadStream();
         using var reader = new StreamReader(stream, Encoding.UTF8);
         var content = await reader.ReadToEndAsync();
-        _prices = ParseCsv(content);
+        Prices = ParseCsv(content);
+        await DataReady();
     }
 
     private List<PriceCalculatorDto> ParseCsv(string csv)
@@ -80,23 +84,30 @@ public partial class PriceCalculatorComponent : ComponentBase
                         : 0,
                     ValidatorResult = string.Empty
                 };
-                var validatorResult = _validator!.Validate(priceCalculatorDto);
-                if (!validatorResult.IsValid)
-                {
-                    foreach (var error in validatorResult.Errors)
-                    {
-                        priceCalculatorDto.ValidatorResult = error.ErrorMessage;
-                    }
-                }
+                priceCalculatorDto.ValidatorResult = ValidateRecord(priceCalculatorDto);
                 result.Add(priceCalculatorDto);
             }
         }
         return result;
     }
 
+    private string ValidateRecord(PriceCalculatorDto item)
+    {
+        var validatorResult = _validator!.Validate(item);
+        if (!validatorResult.IsValid)
+        {
+            foreach (var error in validatorResult.Errors)
+            {
+                return error.ErrorMessage;
+            }
+        }
+
+        return string.Empty;
+    }
+
     private async Task DataReady()
     {
         if (PriceCalculatorReady.HasDelegate)
-            await PriceCalculatorReady.InvokeAsync(_prices);
+            await PriceCalculatorReady.InvokeAsync(Prices);
     }
 }

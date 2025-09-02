@@ -1,13 +1,16 @@
 ﻿@using Dto
 @using Radzen
 @using Radzen.Blazor
-<h3>Wczytaj plik CSV zawierający kalkulator cen</h3>
-<InputFile OnChange="HandleFileSelected" accept=".csv" />
-<br /><br />
 
-@if (_prices != null)
+
+@if (Prices is null || Prices.Count <= 0)
 {
-    <RadzenDataGrid Data="@_prices" 
+    <h3>Wczytaj plik CSV zawierający kalkulator cen</h3>
+    <InputFile OnChange="HandleFileSelected" accept=".csv" />
+}
+else
+{
+    <RadzenDataGrid Data="@Prices" 
                     TItem="PriceCalculatorDto" ColumnWidth="200px"
                     @ref="_grid"
                     EditMode="DataGridEditMode.Single"
@@ -45,6 +48,4 @@
             </RadzenDataGridColumn>
         </Columns>
     </RadzenDataGrid>
-    
-    <RadzenButton Click=@DataReady Text="Primary" ButtonStyle="ButtonStyle.Primary" />
 }

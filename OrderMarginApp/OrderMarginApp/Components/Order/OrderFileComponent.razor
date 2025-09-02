@@ -2,15 +2,15 @@
 @using Radzen
 @using Radzen.Blazor
 
-<h3>Wczytaj plik CSV zawierający marżowość</h3>
-
-<InputFile OnChange="HandleFileSelected" accept=".csv" />
-<br /><br />
-
-@if (_orders != null)
+@if (Orders is null || Orders.Count <= 0)
+{
+    <h3>Wczytaj plik CSV zawierający marżowość</h3>
+    <InputFile OnChange="HandleFileSelected" accept=".csv" />
+}
+else
 {
     <RadzenDataGrid 
-        Data="@_orders" 
+        Data="@Orders" 
         TItem="OrderFileDto"
         @ref="_grid"
         ColumnWidth="200px"
@@ -125,5 +125,4 @@
             </RadzenDataGridColumn>
         </Columns>
     </RadzenDataGrid>
-    <RadzenButton Click=@DataReady Text="Primary" ButtonStyle="ButtonStyle.Primary" />
 }

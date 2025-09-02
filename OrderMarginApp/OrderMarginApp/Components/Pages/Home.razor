@@ -8,7 +8,7 @@
 <RadzenSteps CanChange="@CanChange">
     <Steps >
         <RadzenStepsItem Text="Kalkulator cen">
-            <PriceCalculatorComponent PriceCalculatorReady="@PriceCalculatorReadyEvent"></PriceCalculatorComponent>
+            <PriceCalculatorComponent Prices="_prices" PriceCalculatorReady="@PriceCalculatorReadyEvent"></PriceCalculatorComponent>
         </RadzenStepsItem>
         <RadzenStepsItem Text="Marżowość">
             <OrderFileComponent OrderFileReady="@OrderFileReadyEvent"></OrderFileComponent>
@@ -20,6 +20,13 @@
 @code {
     private List<PriceCalculatorDto>? _prices;
     private List<OrderFileDto>? _orders;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        _prices = new();
+        await base.OnInitializedAsync();
+    }
+    
     private void PriceCalculatorReadyEvent(List<PriceCalculatorDto> result)
     {
         _prices = result;
@@ -27,31 +34,31 @@
     
     private void OrderFileReadyEvent(List<OrderFileDto> result)
     {
+        Console.WriteLine("ess2");
         _orders = result;
     }
     
     private async Task CanChange(StepsCanChangeEventArgs args)
     {
-        // przejście do kroku drugiego tylko jeśli są sku które można wykluczyć
-        await Task.CompletedTask;
+        if (args.SelectedIndex == 0 && _prices!.Count > 0)
+        {
+            var allRecordValid = _prices!.All(x => string.IsNullOrEmpty(x.ValidatorResult));
+            if (allRecordValid)
+            {
+                return;
+            }
+        }
+        
+        await DialogService.Alert(
+            "Nie wszystkie rekordy są prawidłowe",
+            "Uwaga!",
+            new ConfirmOptions()
+            {
+                CloseDialogOnEsc = false,
+                CloseDialogOnOverlayClick = false,
+                ShowClose = false,
+                OkButtonText = "Ok",
+            });
         args.PreventDefault();
-        return;
-        //
-        // var response = await DialogService.Confirm(
-        //     "Are you sure you want to continue without saving?",
-        //     "Confirm",
-        //     new ConfirmOptions()
-        //     {
-        //         CloseDialogOnEsc = false,
-        //         CloseDialogOnOverlayClick = false,
-        //         ShowClose = false,
-        //         CancelButtonText = "No",
-        //         OkButtonText = "Yes",
-        //     });
-        //
-        // if (response == false)
-        // {
-        //     args.PreventDefault();
-        // }
     }
 }

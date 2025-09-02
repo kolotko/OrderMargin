@@ -7,13 +7,14 @@ using Radzen.Blazor;
 using Validator;
 
 namespace OrderMarginApp.Components.Order;
-
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 public partial class OrderFileComponent : ComponentBase
 {
     [Parameter]
     public EventCallback<List<OrderFileDto>> OrderFileReady { get; set; }
 
-    private List<OrderFileDto>? _orders;
+    [Parameter]
+    public List<OrderFileDto>? Orders { get; set; }
     private OrderFileValidator? _validator;
     private RadzenDataGrid<OrderFileDto> _grid;
 
@@ -23,16 +24,18 @@ public partial class OrderFileComponent : ComponentBase
         await base.OnInitializedAsync();
     }
 
-    private void OnUpdateRow(OrderFileDto item)
+    private async Task OnUpdateRow(OrderFileDto item)
     {
-        item.ValidatorResult = "";
-        _grid.UpdateRow(item);
+        item.ValidatorResult = ValidateRecord(item);
+        await _grid.UpdateRow(item);
+        await DataReady();
     }
 
-    private void DeleteRow(OrderFileDto item)
+    private async Task DeleteRow(OrderFileDto item)
     {
-        _orders!.Remove(item);
-        _grid.Reload();
+        Orders!.Remove(item);
+        await _grid.Reload();
+        await DataReady();
     }
 
     private async Task HandleFileSelected(InputFileChangeEventArgs e)
@@ -41,7 +44,8 @@ public partial class OrderFileComponent : ComponentBase
         await using var stream = file.OpenReadStream();
         using var reader = new StreamReader(stream, Encoding.UTF8);
         var content = await reader.ReadToEndAsync();
-        _orders = ParseCsv(content);
+        Orders = ParseCsv(content);
+        await DataReady();
     }
 
     private List<OrderFileDto> ParseCsv(string csv)
@@ -94,15 +98,7 @@ public partial class OrderFileComponent : ComponentBase
                 };
 
                 order.TotalCost = order.Quantity * order.Price + order.ShippingCost;
-                var validatorResult = _validator!.Validate(order);
-                if (!validatorResult.IsValid)
-                {
-                    foreach (var error in validatorResult.Errors)
-                    {
-                        order.ValidatorResult = error.ErrorMessage;
-                    }
-                }
-
+                order.ValidatorResult = ValidateRecord(order);
                 result.Add(order);
             }
         }
@@ -110,9 +106,23 @@ public partial class OrderFileComponent : ComponentBase
         return result;
     }
 
+    private string ValidateRecord(OrderFileDto item)
+    {
+        var validatorResult = _validator!.Validate(item);
+        if (!validatorResult.IsValid)
+        {
+            foreach (var error in validatorResult.Errors)
+            {
+                return error.ErrorMessage;
+            }
+        }
+
+        return string.Empty;
+    }
+
     private async Task DataReady()
     {
         if (OrderFileReady.HasDelegate)
-            await OrderFileReady.InvokeAsync(_orders);
+            await OrderFileReady.InvokeAsync(Orders);
     }
 }
