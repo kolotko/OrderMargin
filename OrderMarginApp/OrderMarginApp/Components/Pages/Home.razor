@@ -11,14 +11,14 @@
             <PriceCalculatorComponent Prices="_prices" PriceCalculatorReady="@PriceCalculatorReadyEvent"></PriceCalculatorComponent>
         </RadzenStepsItem>
         <RadzenStepsItem Text="Marżowość">
-            <OrderFileComponent OrderFileReady="@OrderFileReadyEvent"></OrderFileComponent>
+            <OrderFileComponent Orders="_orders" Skus="_skus" OrderFileReady="@OrderFileReadyEvent"></OrderFileComponent>
         </RadzenStepsItem>
-       
     </Steps>
 </RadzenSteps>
 
 @code {
     private List<PriceCalculatorDto>? _prices;
+    private List<string?>? _skus;
     private List<OrderFileDto>? _orders;
     
     protected override async Task OnInitializedAsync()
@@ -34,7 +34,6 @@
     
     private void OrderFileReadyEvent(List<OrderFileDto> result)
     {
-        Console.WriteLine("ess2");
         _orders = result;
     }
     
@@ -43,6 +42,16 @@
         if (args.SelectedIndex == 0 && _prices!.Count > 0)
         {
             var allRecordValid = _prices!.All(x => string.IsNullOrEmpty(x.ValidatorResult));
+            if (allRecordValid)
+            {
+                _skus = _prices!.Select(y => y.Sku).ToList();
+                return;
+            }
+        }
+        
+        if (args.SelectedIndex == 1 && _orders!.Count > 0)
+        {
+            var allRecordValid = _orders!.All(x => string.IsNullOrEmpty(x.ValidatorResult));
             if (allRecordValid)
             {
                 return;

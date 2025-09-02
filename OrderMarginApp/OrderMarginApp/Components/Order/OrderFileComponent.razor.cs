@@ -15,6 +15,8 @@ public partial class OrderFileComponent : ComponentBase
 
     [Parameter]
     public List<OrderFileDto>? Orders { get; set; }
+    [Parameter]
+    public List<string>? Skus { get; set; }
     private OrderFileValidator? _validator;
     private RadzenDataGrid<OrderFileDto> _grid;
 
@@ -115,6 +117,12 @@ public partial class OrderFileComponent : ComponentBase
             {
                 return error.ErrorMessage;
             }
+        }
+
+        var isAvailable = Skus!.Contains(item.Sku ?? "");
+        if (!isAvailable)
+        {
+            return "Brak pasującego rekordu w pliku Kalkulator Cen";
         }
 
         return string.Empty;
