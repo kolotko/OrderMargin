@@ -20,5 +20,7 @@ public class Order
     public string? TrackingNumber { get; set; }
     public string? OrderStatus { get; set; }
     public decimal TotalCost { get; set; }
+    public decimal TotalCostPln { get; set; }
+    public decimal CurrencyExchangeRate { get; set; }
     public List<PriceCalculator>? PriceCalculator { get; set; }
 }

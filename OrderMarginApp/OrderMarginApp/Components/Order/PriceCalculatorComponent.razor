@@ -16,6 +16,11 @@ else
                     EditMode="DataGridEditMode.Single"
                     RowUpdate="@OnUpdateRow">
         <Columns>
+            <RadzenDataGridColumn TItem="PriceCalculatorDto" Property="@nameof(PriceCalculatorDto.ProductName)" Title="@nameof(PriceCalculatorDto.ProductName)" CssClass="rz-column-title">
+                <EditTemplate Context="data">
+                    <RadzenTextBox @bind-Value="data.ProductName" Style="width:100%" />
+                </EditTemplate>
+            </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="PriceCalculatorDto" Property="@nameof(PriceCalculatorDto.Sku)" Title="@nameof(PriceCalculatorDto.Sku)" CssClass="rz-column-title">
                 <EditTemplate Context="data">
                     <RadzenTextBox @bind-Value="data.Sku" Style="width:100%" />
@@ -29,6 +34,21 @@ else
             <RadzenDataGridColumn TItem="PriceCalculatorDto" Property="@nameof(PriceCalculatorDto.NetDeliveryCostZl)" Title="@nameof(PriceCalculatorDto.NetDeliveryCostZl)">
                 <EditTemplate Context="data">
                     <RadzenNumeric @bind-Value="data.NetDeliveryCostZl" Style="width:100%" />
+                </EditTemplate>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="PriceCalculatorDto" Property="@nameof(PriceCalculatorDto.TotalCosts)" Title="@nameof(PriceCalculatorDto.TotalCosts)">
+                <EditTemplate Context="data">
+                    <RadzenNumeric @bind-Value="data.TotalCosts" Style="width:100%" />
+                </EditTemplate>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="PriceCalculatorDto" Property="@nameof(PriceCalculatorDto.AmountMargin)" Title="@nameof(PriceCalculatorDto.AmountMargin)">
+                <EditTemplate Context="data">
+                    <RadzenNumeric @bind-Value="data.AmountMargin" Style="width:100%" />
+                </EditTemplate>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="PriceCalculatorDto" Property="@nameof(PriceCalculatorDto.IncomePercentage)" Title="@nameof(PriceCalculatorDto.IncomePercentage)">
+                <EditTemplate Context="data">
+                    <RadzenNumeric @bind-Value="data.IncomePercentage" Style="width:100%" />
                 </EditTemplate>
             </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="PriceCalculatorDto" Property="@nameof(PriceCalculatorDto.ValidatorResult)" Title="@nameof(PriceCalculatorDto.ValidatorResult)" />

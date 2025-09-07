@@ -5,6 +5,7 @@ namespace Validator;
 
 public class OrderFileValidator : AbstractValidator<OrderFileDto>
 {
+    private static readonly string[] AllowedCurrencies = { "PLN", "EUR" };
     public OrderFileValidator()
     {
         RuleFor(x => x.OrderId)
@@ -21,7 +22,9 @@ public class OrderFileValidator : AbstractValidator<OrderFileDto>
             .NotEmpty().WithMessage("ProductId nie może być puste.");
 
         RuleFor(x => x.Currency)
-            .NotEmpty().WithMessage("Currency nie może być puste.");
+            .NotEmpty()
+            .Must(value => AllowedCurrencies.Contains(value))
+            .WithMessage("Dozwolone waluty to PLN EUR");
 
         RuleFor(x => x.ShippingMethod)
             .NotEmpty().WithMessage("ShippingMethod nie może być puste.");

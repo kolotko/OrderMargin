@@ -17,7 +17,8 @@ public partial class PriceCalculatorComponent : ComponentBase
     [Parameter]
     public List<PriceCalculatorDto>? Prices { get; set; }
     private PriceCalculatorDtoValidator? _validator;
-    private const string _regexPattern = @"\s|zł";
+    private const string _regexPattern = @"[^\d.]";
+    private const string _regexPatternPercentage = @"\s|%";
     private RadzenDataGrid<PriceCalculatorDto> _grid;
 
     protected override async Task OnInitializedAsync()
@@ -65,8 +66,12 @@ public partial class PriceCalculatorComponent : ComponentBase
                     break;
                 }
 
+                var x = cols[26];
+                var d = cols[27];
+                var z = cols[28];
                 var priceCalculatorDto = new PriceCalculatorDto()
                 {
+                    ProductName = cols[0].Trim(),
                     Sku = cols[1].Trim(),
                     EstimatedShippingCostZl = decimal.TryParse(
                         Regex.Replace(cols[22], _regexPattern, ""),
@@ -82,8 +87,30 @@ public partial class PriceCalculatorComponent : ComponentBase
                         out var netDeliveryCost)
                         ? netDeliveryCost
                         : 0,
+                    TotalCosts = decimal.TryParse(
+                        Regex.Replace(cols[26], _regexPattern, ""),
+                        NumberStyles.Any,
+                        CultureInfo.InvariantCulture,
+                        out var totalCosts)
+                        ? totalCosts
+                        : 0,
+                    AmountMargin = decimal.TryParse(
+                        Regex.Replace(cols[27], _regexPattern, ""),
+                        NumberStyles.Any,
+                        CultureInfo.InvariantCulture,
+                        out var amountMargin)
+                        ? amountMargin
+                        : 0,
+                    IncomePercentage = decimal.TryParse(
+                        Regex.Replace(cols[28], _regexPatternPercentage, ""),
+                        NumberStyles.Any,
+                        CultureInfo.InvariantCulture,
+                        out var incomePercentage)
+                        ? incomePercentage
+                        : 0,
                     ValidatorResult = string.Empty
                 };
+
                 priceCalculatorDto.ValidatorResult = ValidateRecord(priceCalculatorDto);
                 result.Add(priceCalculatorDto);
             }

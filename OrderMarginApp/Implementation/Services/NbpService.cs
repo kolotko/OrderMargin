@@ -19,17 +19,23 @@ public class NbpService(HttpClient httpClient) : INbpService
 
     public async Task DownloadRatesFromTimeRange(DateOnly minDate, DateOnly maxTaxDate)
     {
+        var overriddenMinDate = GetStartDate(minDate);
         _cache = new();
         foreach (var currencyCode in NbpSettings.CurrencyCodes)
         {
-            var eurData = await DownloadData(currencyCode, minDate, maxTaxDate);
-            var eurRates = FillMissingDates(eurData, minDate, maxTaxDate);
+            var eurData = await DownloadData(currencyCode, overriddenMinDate, maxTaxDate);
+            var eurRates = FillMissingDates(eurData, overriddenMinDate, maxTaxDate);
             _cache.Add(currencyCode, eurRates);
         }
     }
 
     public decimal GetRateForDay(string currency, DateOnly date)
     {
+        if (currency == "PLN")
+        {
+            return 1;
+        }
+
         var rates = _cache[currency];
         var record = rates.FirstOrDefault(x => x.Date == date);
         return record.Rate;
@@ -87,5 +93,18 @@ public class NbpService(HttpClient httpClient) : INbpService
         }
 
         return result;
+    }
+
+    private static DateOnly GetStartDate(DateOnly minTaxDate)
+    {
+        switch (minTaxDate.DayOfWeek)
+        {
+            case DayOfWeek.Saturday:
+                return minTaxDate.AddDays(-1);
+            case DayOfWeek.Sunday:
+                return minTaxDate.AddDays(-2);
+            default:
+                return minTaxDate;
+        }
     }
 }

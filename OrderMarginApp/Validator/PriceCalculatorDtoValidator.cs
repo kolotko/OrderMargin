@@ -7,6 +7,12 @@ public class PriceCalculatorDtoValidator : AbstractValidator<PriceCalculatorDto>
 {
     public PriceCalculatorDtoValidator()
     {
+        RuleFor(x => x.ProductName)
+            .NotEmpty()
+            .WithMessage("Nazwa produktu nie może być pusta.")
+            .Must(sku => !string.IsNullOrWhiteSpace(sku))
+            .WithMessage("Nazwa produktu musi zawierać znaki.");
+
         RuleFor(x => x.Sku)
             .NotEmpty()
             .WithMessage("SKU nie może być puste.")
@@ -20,5 +26,13 @@ public class PriceCalculatorDtoValidator : AbstractValidator<PriceCalculatorDto>
         RuleFor(x => x.NetDeliveryCostZl)
             .GreaterThan(0)
             .WithMessage("Koszt dostawy netto musi być większy niż 0.");
+
+        RuleFor(x => x.TotalCosts)
+            .GreaterThan(0)
+            .WithMessage("Koszt całkowity musi być większy niż 0.");
+
+        RuleFor(x => x.AmountMargin)
+            .GreaterThan(0)
+            .WithMessage("Marża kwotowo musi być większy niż 0.");
     }
 }

@@ -10,8 +10,12 @@ else
         <Template Context="order">
             <RadzenDataGrid Data="@order.PriceCalculator">
                 <Columns>
+                    <RadzenDataGridColumn Property="@nameof(Domain.PriceCalculator.ProductName)" Title="@nameof(Domain.PriceCalculator.ProductName)" />
                     <RadzenDataGridColumn Property="@nameof(Domain.PriceCalculator.EstimatedShippingCostZl)" Title="@nameof(Domain.PriceCalculator.EstimatedShippingCostZl)" />
                     <RadzenDataGridColumn Property="@nameof(Domain.PriceCalculator.NetDeliveryCostZl)" Title="@nameof(Domain.PriceCalculator.NetDeliveryCostZl)" />
+                    <RadzenDataGridColumn Property="@nameof(Domain.PriceCalculator.TotalCosts)" Title="@nameof(Domain.PriceCalculator.TotalCosts)" />
+                    <RadzenDataGridColumn Property="@nameof(Domain.PriceCalculator.AmountMargin)" Title="@nameof(Domain.PriceCalculator.AmountMargin)" />
+                    <RadzenDataGridColumn Property="@nameof(Domain.PriceCalculator.IncomePercentage)" Title="@nameof(Domain.PriceCalculator.IncomePercentage)" />
                 </Columns>
             </RadzenDataGrid>
         </Template>

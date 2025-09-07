@@ -29,7 +29,6 @@ public static class OrderMapper
                 ShippingMethod = orderFileDto.ShippingMethod,
                 TrackingNumber = orderFileDto.TrackingNumber,
                 OrderStatus = orderFileDto.OrderStatus,
-                TotalCost = orderFileDto.TotalCost,
             };
 
             var fetchPriceCalculatorDtos = priceCalculatorDtos.Where(x => x.Sku == tmpOrder.Sku).ToList();
@@ -47,8 +46,12 @@ public static class OrderMapper
         {
             result.Add(new PriceCalculator
             {
+                ProductName = priceCalculatorDto.ProductName,
                 EstimatedShippingCostZl = priceCalculatorDto.EstimatedShippingCostZl,
                 NetDeliveryCostZl = priceCalculatorDto.NetDeliveryCostZl,
+                TotalCosts = priceCalculatorDto.TotalCosts,
+                AmountMargin = priceCalculatorDto.AmountMargin,
+                IncomePercentage = priceCalculatorDto.IncomePercentage,
             });
         }
 

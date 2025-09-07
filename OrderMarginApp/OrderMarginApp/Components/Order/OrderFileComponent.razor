@@ -103,11 +103,6 @@ else
                     <RadzenTextBox @bind-Value="data.OrderStatus" Style="width:100%" />
                 </EditTemplate> 
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="OrderFileDto" Property="@nameof(OrderFileDto.TotalCost)" Title="@nameof(OrderFileDto.TotalCost)">
-                <EditTemplate Context="data">
-                    <RadzenNumeric @bind-Value="data.TotalCost" Style="width:100%" />
-                </EditTemplate> 
-            </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="OrderFileDto" Property="@nameof(OrderFileDto.ValidatorResult)" Title="@nameof(OrderFileDto.ValidatorResult)" />
             <RadzenDataGridColumn TItem="OrderFileDto" Context="data" TextAlign="TextAlign.Center" Width="120px">
                 <Template Context="data">

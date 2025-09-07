@@ -22,7 +22,6 @@ public partial class OrderFileComponent : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        Console.WriteLine("xd");
         _validator = new OrderFileValidator();
         await base.OnInitializedAsync();
     }
@@ -100,7 +99,6 @@ public partial class OrderFileComponent : ComponentBase
                     OrderStatus = cols[16].Trim(),
                 };
 
-                order.TotalCost = order.Quantity * order.Price + order.ShippingCost;
                 order.ValidatorResult = ValidateRecord(order);
                 result.Add(order);
             }
