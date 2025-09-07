@@ -13,6 +13,9 @@
         <RadzenStepsItem Text="Marżowość">
             <OrderFileComponent Orders="_orders" Skus="_skus" OrderFileReady="@OrderFileReadyEvent"></OrderFileComponent>
         </RadzenStepsItem>
+        <RadzenStepsItem Text="komplet danych">
+            <DataCompletionComponent PricesDto="_prices" OrdersDto="_orders"></DataCompletionComponent>
+        </RadzenStepsItem>
     </Steps>
 </RadzenSteps>
 

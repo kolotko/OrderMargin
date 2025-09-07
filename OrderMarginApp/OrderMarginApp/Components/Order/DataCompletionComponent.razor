@@ -1,5 +1,39 @@
-﻿<h3>DataCompletionComponent</h3>
-
-@code {
-    
+﻿@using Radzen
+@using Radzen.Blazor
+@if (Orders is null || Orders.Count <= 0)
+{
+    <h3>Przygotowuje dane</h3>
+}
+else
+{
+    <RadzenDataGrid @ref="_grid" ExpandMode="DataGridExpandMode.Single" Data="@Orders" TItem="Domain.Order">
+        <Template Context="order">
+            <RadzenDataGrid Data="@order.PriceCalculator">
+                <Columns>
+                    <RadzenDataGridColumn Property="@nameof(Domain.PriceCalculator.EstimatedShippingCostZl)" Title="@nameof(Domain.PriceCalculator.EstimatedShippingCostZl)" />
+                    <RadzenDataGridColumn Property="@nameof(Domain.PriceCalculator.NetDeliveryCostZl)" Title="@nameof(Domain.PriceCalculator.NetDeliveryCostZl)" />
+                </Columns>
+            </RadzenDataGrid>
+        </Template>
+        <Columns>
+            <RadzenDataGridColumn Property="@nameof(Domain.Order.OrderId)" Title="@nameof(Domain.Order.OrderId)" />
+            <RadzenDataGridColumn Property="@nameof(Domain.Order.Date)" Title="@nameof(Domain.Order.Date)" FormatString="{0:yyyy-MM-dd}"/>
+            <RadzenDataGridColumn Property="@nameof(Domain.Order.Source)" Title="@nameof(Domain.Order.Source)" Visible="false" />
+            <RadzenDataGridColumn Property="@nameof(Domain.Order.LastName)" Title="@nameof(Domain.Order.LastName)" Visible="false" />
+            <RadzenDataGridColumn Property="@nameof(Domain.Order.Phone)" Title="@nameof(Domain.Order.Phone)" Visible="false" />
+            <RadzenDataGridColumn Property="@nameof(Domain.Order.Email)" Title="@nameof(Domain.Order.Email)" Visible="false" />
+            <RadzenDataGridColumn Property="@nameof(Domain.Order.ProductName)" Title="@nameof(Domain.Order.ProductName)" />
+            <RadzenDataGridColumn Property="@nameof(Domain.Order.ProductId)" Title="@nameof(Domain.Order.ProductId)" Visible="false" />
+            <RadzenDataGridColumn Property="@nameof(Domain.Order.Sku)" Title="@nameof(Domain.Order.Sku)" />
+            <RadzenDataGridColumn Property="@nameof(Domain.Order.Ean)" Title="@nameof(Domain.Order.Ean)" Visible="false" />
+            <RadzenDataGridColumn Property="@nameof(Domain.Order.Quantity)" Title="@nameof(Domain.Order.Quantity)" />
+            <RadzenDataGridColumn Property="@nameof(Domain.Order.Price)" Title="@nameof(Domain.Order.Price)" />
+            <RadzenDataGridColumn Property="@nameof(Domain.Order.Currency)" Title="@nameof(Domain.Order.Currency)" />
+            <RadzenDataGridColumn Property="@nameof(Domain.Order.ShippingCost)" Title="@nameof(Domain.Order.ShippingCost)" />
+            <RadzenDataGridColumn Property="@nameof(Domain.Order.ShippingMethod)" Title="@nameof(Domain.Order.ShippingMethod)" Visible="false" />
+            <RadzenDataGridColumn Property="@nameof(Domain.Order.TrackingNumber)" Title="@nameof(Domain.Order.TrackingNumber)" Visible="false" />
+            <RadzenDataGridColumn Property="@nameof(Domain.Order.OrderStatus)" Title="@nameof(Domain.Order.OrderStatus)" Visible="false" />
+            <RadzenDataGridColumn Property="@nameof(Domain.Order.TotalCost)" Title="@nameof(Domain.Order.TotalCost)" />
+        </Columns>
+    </RadzenDataGrid>
 }
