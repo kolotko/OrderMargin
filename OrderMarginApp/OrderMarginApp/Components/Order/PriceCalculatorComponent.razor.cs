@@ -66,9 +66,6 @@ public partial class PriceCalculatorComponent : ComponentBase
                     break;
                 }
 
-                var x = cols[26];
-                var d = cols[27];
-                var z = cols[28];
                 var priceCalculatorDto = new PriceCalculatorDto()
                 {
                     ProductName = cols[0].Trim(),

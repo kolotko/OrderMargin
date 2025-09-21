@@ -6,38 +6,40 @@
 }
 else
 {
-    <RadzenDataGrid @ref="_grid" ExpandMode="DataGridExpandMode.Single" Data="@Orders" TItem="Domain.Order">
+    <RadzenDataGrid @ref="_grid" ExpandMode="DataGridExpandMode.Single" Data="@Orders" TItem="Domain.Order" AllowColumnPicking="true">
         <Template Context="order">
-            <RadzenDataGrid Data="@order.PriceCalculator">
+            <RadzenDataGrid Data="@order.PriceCalculator" AllowColumnPicking="true">
                 <Columns>
-                    <RadzenDataGridColumn Property="@nameof(Domain.PriceCalculator.ProductName)" Title="@nameof(Domain.PriceCalculator.ProductName)" />
-                    <RadzenDataGridColumn Property="@nameof(Domain.PriceCalculator.EstimatedShippingCostZl)" Title="@nameof(Domain.PriceCalculator.EstimatedShippingCostZl)" />
-                    <RadzenDataGridColumn Property="@nameof(Domain.PriceCalculator.NetDeliveryCostZl)" Title="@nameof(Domain.PriceCalculator.NetDeliveryCostZl)" />
-                    <RadzenDataGridColumn Property="@nameof(Domain.PriceCalculator.TotalCosts)" Title="@nameof(Domain.PriceCalculator.TotalCosts)" />
-                    <RadzenDataGridColumn Property="@nameof(Domain.PriceCalculator.AmountMargin)" Title="@nameof(Domain.PriceCalculator.AmountMargin)" />
-                    <RadzenDataGridColumn Property="@nameof(Domain.PriceCalculator.IncomePercentage)" Title="@nameof(Domain.PriceCalculator.IncomePercentage)" />
+                    <RadzenDataGridColumn Property="@nameof(Domain.PriceCalculator.ProductName)" Title="Nazwa Produktu" />
+                    <RadzenDataGridColumn Property="@nameof(Domain.PriceCalculator.EstimatedShippingCostZl)" Title="Rzeczywisty koszt dostawy netto (PLN)" />
+                    <RadzenDataGridColumn Property="@nameof(Domain.PriceCalculator.NetDeliveryCostZl)" Title="Koszt zakupu produktu netto" />
+                    <RadzenDataGridColumn Property="@nameof(Domain.PriceCalculator.TotalCosts)" Title="Cena sprzedaży + koszt dostawy netto (PLN)" />
+                    <RadzenDataGridColumn Property="@nameof(Domain.PriceCalculator.AmountMargin)" Title="Marża kwotowo" />
+                    <RadzenDataGridColumn Property="@nameof(Domain.PriceCalculator.IncomePercentage)" Title="Procentowa marża (%)" />
                 </Columns>
             </RadzenDataGrid>
         </Template>
         <Columns>
-            <RadzenDataGridColumn Property="@nameof(Domain.Order.OrderId)" Title="@nameof(Domain.Order.OrderId)" />
-            <RadzenDataGridColumn Property="@nameof(Domain.Order.Date)" Title="@nameof(Domain.Order.Date)" FormatString="{0:yyyy-MM-dd}"/>
-            <RadzenDataGridColumn Property="@nameof(Domain.Order.Source)" Title="@nameof(Domain.Order.Source)" Visible="false" />
-            <RadzenDataGridColumn Property="@nameof(Domain.Order.LastName)" Title="@nameof(Domain.Order.LastName)" Visible="false" />
-            <RadzenDataGridColumn Property="@nameof(Domain.Order.Phone)" Title="@nameof(Domain.Order.Phone)" Visible="false" />
-            <RadzenDataGridColumn Property="@nameof(Domain.Order.Email)" Title="@nameof(Domain.Order.Email)" Visible="false" />
-            <RadzenDataGridColumn Property="@nameof(Domain.Order.ProductName)" Title="@nameof(Domain.Order.ProductName)" />
-            <RadzenDataGridColumn Property="@nameof(Domain.Order.ProductId)" Title="@nameof(Domain.Order.ProductId)" Visible="false" />
+            <RadzenDataGridColumn Property="@nameof(Domain.Order.OrderId)" Title="Id zamówienia" />
+            <RadzenDataGridColumn Property="@nameof(Domain.Order.Date)" Title="Data" FormatString="{0:yyyy-MM-dd}" Visible="false"/>
+            <RadzenDataGridColumn Property="@nameof(Domain.Order.Source)" Title="Pochodzenie" Visible="false" />
+            <RadzenDataGridColumn Property="@nameof(Domain.Order.LastName)" Title="Nazwisko" Visible="false" />
+            <RadzenDataGridColumn Property="@nameof(Domain.Order.Phone)" Title="Telefon" Visible="false" />
+            <RadzenDataGridColumn Property="@nameof(Domain.Order.Email)" Title="Email" Visible="false" />
+            <RadzenDataGridColumn Property="@nameof(Domain.Order.ProductName)" Title="Nazwa produktu" />
+            <RadzenDataGridColumn Property="@nameof(Domain.Order.ProductId)" Title="Id produktu" Visible="false" />
             <RadzenDataGridColumn Property="@nameof(Domain.Order.Sku)" Title="@nameof(Domain.Order.Sku)" />
             <RadzenDataGridColumn Property="@nameof(Domain.Order.Ean)" Title="@nameof(Domain.Order.Ean)" Visible="false" />
-            <RadzenDataGridColumn Property="@nameof(Domain.Order.Quantity)" Title="@nameof(Domain.Order.Quantity)" />
-            <RadzenDataGridColumn Property="@nameof(Domain.Order.Price)" Title="@nameof(Domain.Order.Price)" />
-            <RadzenDataGridColumn Property="@nameof(Domain.Order.Currency)" Title="@nameof(Domain.Order.Currency)" />
-            <RadzenDataGridColumn Property="@nameof(Domain.Order.ShippingCost)" Title="@nameof(Domain.Order.ShippingCost)" />
-            <RadzenDataGridColumn Property="@nameof(Domain.Order.ShippingMethod)" Title="@nameof(Domain.Order.ShippingMethod)" Visible="false" />
-            <RadzenDataGridColumn Property="@nameof(Domain.Order.TrackingNumber)" Title="@nameof(Domain.Order.TrackingNumber)" Visible="false" />
-            <RadzenDataGridColumn Property="@nameof(Domain.Order.OrderStatus)" Title="@nameof(Domain.Order.OrderStatus)" Visible="false" />
-            <RadzenDataGridColumn Property="@nameof(Domain.Order.TotalCost)" Title="@nameof(Domain.Order.TotalCost)" />
+            <RadzenDataGridColumn Property="@nameof(Domain.Order.Quantity)" Title="Ilość" />
+            <RadzenDataGridColumn Property="@nameof(Domain.Order.Price)" Title="Cena" />
+            <RadzenDataGridColumn Property="@nameof(Domain.Order.Currency)" Title="Waluta" />
+            <RadzenDataGridColumn Property="@nameof(Domain.Order.ShippingCost)" Title="Koszty wysyłki" />
+            <RadzenDataGridColumn Property="@nameof(Domain.Order.ShippingMethod)" Title="Sposób wysyłki" Visible="false" />
+            <RadzenDataGridColumn Property="@nameof(Domain.Order.TrackingNumber)" Title="Nr nadwaczy" Visible="false" />
+            <RadzenDataGridColumn Property="@nameof(Domain.Order.OrderStatus)" Title="Status zamówienia" Visible="false" />
+            <RadzenDataGridColumn Property="@nameof(Domain.Order.TotalCost)" Title="Całkowity koszt" />
+            <RadzenDataGridColumn Property="@nameof(Domain.Order.TotalCostPln)" Title="Całkowity koszt PLN" />
+            <RadzenDataGridColumn Property="@nameof(Domain.Order.CurrencyExchangeRate)" Title="Kurs" />
         </Columns>
     </RadzenDataGrid>
 }

@@ -11,7 +11,7 @@ public partial class DataCompletionComponent : ComponentBase
 {
     [Inject]
     private INbpService? _nbpService { get; set; }
-    //
+
     [Parameter]
     public List<OrderFileDto>? OrdersDto { get; set; }
 
