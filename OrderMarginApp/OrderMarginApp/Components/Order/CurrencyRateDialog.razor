@@ -1,0 +1,9 @@
+﻿@using Domain
+@using Radzen.Blazor
+
+<RadzenDataGrid Data="@RatesForCurrency" TItem="RateOfTheDay">
+    <Columns>
+        <RadzenDataGridColumn Property="@nameof(RateOfTheDay.Date)" Title="Data" />
+        <RadzenDataGridColumn Property="@nameof(RateOfTheDay.Rate)" Title="Kurs" />
+    </Columns>
+</RadzenDataGrid>

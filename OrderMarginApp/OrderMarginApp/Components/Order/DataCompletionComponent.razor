@@ -6,6 +6,14 @@
 }
 else
 {
+    <RadzenButton Icon="info" Click="@(args => DisplayCurrencyRate())" />
+    <RadzenNumeric @bind-Value="percentValueForSourceCosts" Style="width:200px;" />
+    <RadzenButton Text="Przelicz" Click="@OnCalculate" Style="margin-left:10px;" />
+    <RadzenDropDown Data="@sourceCosts"
+                    TextProperty="Name"
+                    ValueProperty="Source"
+                    @bind-Value="@selectedSourceCostsValue"
+                    Style="width:200px; margin-left:10px;" />
     <RadzenDataGrid @ref="_grid" ExpandMode="DataGridExpandMode.Single" Data="@Orders" TItem="Domain.Order" AllowColumnPicking="true">
         <Template Context="order">
             <RadzenDataGrid Data="@order.PriceCalculator" AllowColumnPicking="true">
@@ -40,6 +48,7 @@ else
             <RadzenDataGridColumn Property="@nameof(Domain.Order.TotalCost)" Title="Całkowity koszt" />
             <RadzenDataGridColumn Property="@nameof(Domain.Order.TotalCostPln)" Title="Całkowity koszt PLN" />
             <RadzenDataGridColumn Property="@nameof(Domain.Order.CurrencyExchangeRate)" Title="Kurs" />
+            <RadzenDataGridColumn Property="@nameof(Domain.Order.Wyliczonawartosc)" Title="Wyliczona" />
         </Columns>
     </RadzenDataGrid>
 }

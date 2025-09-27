@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Text.Json;
 using Abstraction.Services;
+using Domain;
 using Domain.Nbp;
 using Dto.Nbp;
 
@@ -10,7 +11,7 @@ namespace Implementation.Services;
 public class NbpService(HttpClient httpClient) : INbpService
 {
     private HttpClient HttpClient { get; set; } = httpClient;
-    private Dictionary<string, List<(DateOnly Date, decimal Rate)>> _cache = new();
+    private Dictionary<string, List<RateOfTheDay>> _cache = new();
 
     private readonly JsonSerializerOptions _options = new()
     {
@@ -38,7 +39,12 @@ public class NbpService(HttpClient httpClient) : INbpService
 
         var rates = _cache[currency];
         var record = rates.FirstOrDefault(x => x.Date == date);
-        return record.Rate;
+        return record!.Rate;
+    }
+
+    public List<RateOfTheDay> GetDownloadedRatesForCurrency(string currencyCode)
+    {
+        return _cache[currencyCode];
     }
 
     private async Task<NbpExchangeRate> DownloadData(string currencyCode, DateOnly fromDate, DateOnly toDate)
@@ -58,9 +64,9 @@ public class NbpService(HttpClient httpClient) : INbpService
         }
     }
 
-    private static List<(DateOnly Date, decimal Rate)> FillMissingDates(NbpExchangeRate data, DateOnly start, DateOnly end)
+    private static List<RateOfTheDay> FillMissingDates(NbpExchangeRate data, DateOnly start, DateOnly end)
     {
-        var result = new List<(DateOnly Date, decimal Rate)>();
+        var result = new List<RateOfTheDay>();
         decimal lastRate = 0;
 
         try
@@ -75,13 +81,21 @@ public class NbpService(HttpClient httpClient) : INbpService
                 if (rateForDay != null)
                 {
                     lastRate = rateForDay.Mid;
-                    result.Add((date, lastRate));
+                    result.Add(new RateOfTheDay
+                    {
+                        Date = date,
+                        Rate = lastRate
+                    });
                     continue;
                 }
 
                 if (lastRate != 0) // brak kursu (weekend/święto) weź ostatni kurs
                 {
-                    result.Add((date, lastRate));
+                    result.Add(new RateOfTheDay
+                    {
+                        Date = date,
+                        Rate = lastRate
+                    });
                 }
             }
         }

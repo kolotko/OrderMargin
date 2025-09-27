@@ -1,7 +1,9 @@
 ﻿using Abstraction.Services;
+using Domain;
 using Dto;
 using Mapper;
 using Microsoft.AspNetCore.Components;
+using Radzen;
 using Radzen.Blazor;
 
 namespace OrderMarginApp.Components.Order;
@@ -12,6 +14,9 @@ public partial class DataCompletionComponent : ComponentBase
     [Inject]
     private INbpService? _nbpService { get; set; }
 
+    [Inject]
+    public DialogService? DialogService { get; set; }
+
     [Parameter]
     public List<OrderFileDto>? OrdersDto { get; set; }
 
@@ -20,9 +25,19 @@ public partial class DataCompletionComponent : ComponentBase
 
     private List<Domain.Order>? Orders;
     private RadzenDataGrid<Domain.Order> _grid;
+    private int percentValueForSourceCosts;
+    private string? selectedSourceCostsValue;
+    private static List<SourceCosts> sourceCosts =>
+        new List<SourceCosts>()
+        {
+            new SourceCosts() { Name = "Allegro", Source = "Furnster24" },
+            new SourceCosts() { Name = "Amazon", Source = "A1OL92DIL6ZQ4Q" },
+            new SourceCosts() { Name = "Sklep internetowy", Source = "Sklep internetowy" },
+        };
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+        selectedSourceCostsValue = sourceCosts.FirstOrDefault()!.Source;
         if (OrdersDto is null || PricesDto is null)
         {
             return;
@@ -42,6 +57,26 @@ public partial class DataCompletionComponent : ComponentBase
             order.TotalCost = order.Quantity * order.Price + order.ShippingCost;
             order.CurrencyExchangeRate = _nbpService!.GetRateForDay(order.Currency!, DateOnly.FromDateTime(order.Date));
             order.TotalCostPln = order.TotalCost * order.CurrencyExchangeRate;
+            order.Wyliczonawartosc = 0;
+        }
+    }
+
+    private async Task DisplayCurrencyRate()
+    {
+        var ratesForCurrency = _nbpService!.GetDownloadedRatesForCurrency("EUR");
+        // parametry
+        await DialogService!.OpenAsync<CurrencyRateDialog>(
+            "Pobrane kursy dla waluty: EUR",
+            new Dictionary<string, object>() { { "RatesForCurrency", ratesForCurrency } },
+            new DialogOptions() { Width = "400px", Height = "600px" });
+    }
+
+    private void OnCalculate()
+    {
+        var ordersWithSelexctedSource = Orders!.Where(x => x.Source!.Contains(selectedSourceCostsValue!, StringComparison.InvariantCultureIgnoreCase));
+        foreach (var order in ordersWithSelexctedSource)
+        {
+            order.Wyliczonawartosc = order.TotalCostPln + (decimal)(100 + percentValueForSourceCosts) / 100;
         }
     }
     // order.TotalCost = order.Quantity * order.Price + order.ShippingCost;
