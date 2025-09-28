@@ -1,0 +1,39 @@
+name: Deploy Blazor WASM to GitHub Pages
+
+on:
+  push:
+    branches: [ "main" ]
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.0
+
+      - name: Publish Blazor WASM
+        run: dotnet publish -c Release -o release
+
+      - name: Copy wwwroot to temp folder
+        run: |
+          mkdir gh-pages
+          cp -r release/wwwroot/* gh-pages
+          touch gh-pages/.nojekyll
+
+          # ustaw base href
+          sed -i 's|<base href="/" />|<base href="/OrderMarginApp/" />|' gh-pages/index.html
+          sed -i 's|<base href="/" />|<base href="/OrderMarginApp/" />|' gh-pages/404.html
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: gh-pages
