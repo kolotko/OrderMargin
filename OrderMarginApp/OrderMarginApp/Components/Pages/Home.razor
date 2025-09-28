@@ -46,20 +46,23 @@
     private async Task CanChange(StepsCanChangeEventArgs args)
     {
         // nie pozwól na cofnięcie się
-        // if (args.NewIndex < args.SelectedIndex)
-        // {
-        //     await DialogService.Alert(
-        //         "Proces nie pozwala na cofanie się",
-        //         "Uwaga!",
-        //         new ConfirmOptions()
-        //         {
-        //             CloseDialogOnEsc = false,
-        //             CloseDialogOnOverlayClick = false,
-        //             ShowClose = false,
-        //             OkButtonText = "Ok",
-        //         });
-        //     args.PreventDefault();
-        // }
+        Console.WriteLine(args.NewIndex);
+        Console.WriteLine(args.SelectedIndex);
+        if (args.NewIndex < args.SelectedIndex)
+        {
+            await DialogService.Alert(
+                "Proces nie pozwala na cofanie się",
+                "Uwaga!",
+                new ConfirmOptions()
+                {
+                    CloseDialogOnEsc = false,
+                    CloseDialogOnOverlayClick = false,
+                    ShowClose = false,
+                    OkButtonText = "Ok",
+                });
+            args.PreventDefault();
+            return;
+        }
         
         if (args.SelectedIndex == 0 && _prices!.Count > 0)
         {

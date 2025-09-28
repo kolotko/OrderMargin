@@ -22,6 +22,6 @@ public class Order
     public decimal TotalCost { get; set; }
     public decimal TotalCostPln { get; set; }
     public decimal CurrencyExchangeRate { get; set; }
-    public decimal Wyliczonawartosc { get; set; }
+    public decimal CalculatedValue { get; set; }
     public List<PriceCalculator>? PriceCalculator { get; set; }
 }

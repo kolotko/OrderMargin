@@ -57,7 +57,7 @@ public partial class DataCompletionComponent : ComponentBase
             order.TotalCost = order.Quantity * order.Price + order.ShippingCost;
             order.CurrencyExchangeRate = _nbpService!.GetRateForDay(order.Currency!, DateOnly.FromDateTime(order.Date));
             order.TotalCostPln = order.TotalCost * order.CurrencyExchangeRate;
-            order.Wyliczonawartosc = 0;
+            order.CalculatedValue = 0;
         }
     }
 
@@ -73,10 +73,10 @@ public partial class DataCompletionComponent : ComponentBase
 
     private void OnCalculate()
     {
-        var ordersWithSelexctedSource = Orders!.Where(x => x.Source!.Contains(selectedSourceCostsValue!, StringComparison.InvariantCultureIgnoreCase));
-        foreach (var order in ordersWithSelexctedSource)
+        var ordersWithSelectedSource = Orders!.Where(x => x.Source!.Contains(selectedSourceCostsValue!, StringComparison.InvariantCultureIgnoreCase));
+        foreach (var order in ordersWithSelectedSource)
         {
-            order.Wyliczonawartosc = order.TotalCostPln + (decimal)(100 + percentValueForSourceCosts) / 100;
+            order.CalculatedValue = order.TotalCostPln + (decimal)(100 + percentValueForSourceCosts) / 100;
         }
     }
     // order.TotalCost = order.Quantity * order.Price + order.ShippingCost;
