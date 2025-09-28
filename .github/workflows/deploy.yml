@@ -20,7 +20,7 @@ jobs:
           dotnet-version: 8.0.x
 
       - name: Publish Blazor WASM
-        run: dotnet publish -c Release -o release
+        run: dotnet publish ./OrderMarginApp/OrderMarginApp/OrderMarginApp.csproj -c Release -o release
 
       - name: Copy wwwroot to temp folder
         run: |
